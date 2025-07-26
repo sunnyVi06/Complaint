@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComplaintCare - Complaint Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #3b82f6;
+            --accent: #1d4ed8;
+            --light: #f0f9ff;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        /* Page Container */
+        .page-container {
+            display: none;
+            min-height: calc(100vh - 120px);
+            padding: 2rem 0;
+        }
+
+        .page-container.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            color: var(--dark);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        .form-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .form-title h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-title p {
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--gray);
+        }
+
+        /* Dashboard Styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .status-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-in-progress {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-resolved {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .complaint-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .complaint-item {
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+        }
+
+        .complaint-item h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .complaint-item p {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.3rem;
+        }
+
+        .complaint-item .label {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--light-gray);
+            margin: 1.5rem 0;
+        }
+
+        .message-box {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .complaint-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <i class="fas fa-headset"></i>
+                    <span>ComplaintCare</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#" class="nav-link active" data-page="home">Home</a>
+                    <a href="#" class="nav-link" data-page="login">Login</a>
+                    <a href="#" class="nav-link" data-page="signup">SignUp</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <div id="home" class="page-container active">
+        <div class="container">
+            <div class="hero">
+                <h1>Empower Your Team, Exceed Customer Expectations</h1>
+                <p>Discover our Complaint Management Solution to efficiently handle and resolve customer issues.</p>
+                <a href="#" class="btn" data-page="complaint-register">Register your Complaint</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login" class="page-container">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-title">
+                    <h2>Login For Registering the Complaint</h2>
+                    <p>Please enter your Credential!</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Login</button>
+                </form>
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" class="text-link" data-page="signup">SignUp</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SignUp Page -->
+    <div id="signup" class="page-container">
+        <div class="container">
+            <div class="form-container">
+                <div class="form-title">
+                    <h2>SignUp For Registering the Complaint</h2>
+                    <p>Please enter your Details</p>
+                </div>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" class="form-control" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-control" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-control" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobile">Mobile No.</label>
+                        <input type="tel" id="mobile" class="form-control" placeholder="Enter your mobile number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="user-type">Select User Type</label>
+                        <select id="user-type" class="form-control" required>
+                            <option value="">Select User Type</option>
+                            <option value="admin">Admin</option>
+                            <option value="agent">Agent</option>
+                            <option value="user">User</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">Register</button>
+                </form>
+                <div class="form-footer">
+                    <p>Had an account? <a href="#" class="text-link" data-page="login">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Complaint Register Page -->
+    <div id="complaint-register" class="page-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Complaint Register</h1>
+                <div class="status-badge status-pending">Status: Pending</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">New Complaint</h2>
+                </div>
+                <form>
+                    <div class="form-group">
+                        <label for="complaint-name">Name</label>
+                        <input type="text" id="complaint-name" class="form-control" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="complaint-address">Address</label>
+                        <input type="text" id="complaint-address" class="form-control" placeholder="Enter address">
+                    </div>
+                    <div class="form-group">
+                        <label for="complaint-city">City</label>
+                        <input type="text" id="complaint-city" class="form-control" placeholder="Enter city">
+                    </div>
+                    <div class="form-group">
+                        <label for="complaint-state">State</label>
+                        <input type="text" id="complaint-state" class="form-control" placeholder="Enter state">
+                    </div>
+                    <div class="form-group">
+                        <label for="complaint-pincode">Pincode</label>
+                        <input type="text" id="complaint-pincode" class="form-control" placeholder="Enter pincode">
+                    </div>
+                    <div class="form-group">
+                        <label for="complaint-description">Description</label>
+                        <textarea id="complaint-description" class="form-control" rows="4" placeholder="Describe your complaint"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="complaint-type">Type</label>
+                        <select id="complaint-type" class="form-control">
+                            <option value="pending" selected>Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Register Complaint</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="page-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Hi Admin</h1>
+                <div class="status-badge status-in-progress">Dashboard User Agent</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Users Complaints</h2>
+                </div>
+                
+                <div class="complaint-item">
+                    <h4>Complaint #1001</h4>
+                    <p><span class="label">Name:</span> 3dd</p>
+                    <p><span class="label">Address:</span> sdcloud</p>
+                    <p><span class="label">City:</span> dioaba</p>
+                    <p><span class="label">State:</span> sdcloud</p>
+                    <p><span class="label">Pre-task:</span> 233131</p>
+                    <p><span class="label">Comment:</span> draxdata</p>
+                    <p><span class="label">Status:</span> dda</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3 class="card-title">Assigns</h3>
+                <div class="complaint-grid">
+                    <div class="complaint-item">
+                        <h4>Agent Assignment</h4>
+                        <p><span class="label">Assigned To:</span> John Doe</p>
+                        <p><span class="label">Status:</span> In Progress</p>
+                        <p><span class="label">Deadline:</span> 2024-05-30</p>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3 class="card-title">Agents</h3>
+                <p>No Agents to show</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Dashboard -->
+    <div id="agent-dashboard" class="page-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">HI Agent</h1>
+                <div class="status-badge status-in-progress">New Companies</div>
+            </div>
+
+            <div class="card">
+                <div class="complaint-item">
+                    <h4>Complaint #1002</h4>
+                    <p><span class="label">Name:</span> sdd</p>
+                    <p><span class="label">Address:</span> sdd.sdd</p>
+                    <p><span class="label">City:</span> dsaisa</p>
+                    <p><span class="label">State:</span> sdd.sdd</p>
+                    <p><span class="label">Phone:</span> 232131</p>
+                    <p><span class="label">Comment:</span> dsaidata</p>
+                    <p><span class="label">Status:</span> dda</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3 class="card-title">Group Charge</h3>
+                <div class="complaint-grid">
+                    <div class="complaint-item">
+                        <h4>Team Assignment</h4>
+                        <p><span class="label">Group:</span> Support Team A</p>
+                        <p><span class="label">Manager:</span> Jane Smith</p>
+                        <p><span class="label">Priority:</span> High</p>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <h3 class="card-title">Message Box</h3>
+                <div class="message-box">
+                    <input type="text" class="message-input" placeholder="Type your message...">
+                    <button class="btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>ComplaintCare &copy; 2024</p>
+        </div>
+    </footer>
+
+    <script>
+        // Page Navigation
+        document.addEventListener('DOMContentLoaded',
